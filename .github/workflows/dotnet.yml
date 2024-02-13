@@ -1,32 +1,41 @@
-name: Blazor WebAssembly
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.x.x
-    - name: Restore dependencies and build
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Git
       run: |
-        cd Imc
-        dotnet restore
-        dotnet build --no-restore
-    - name: Test
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        
+    - name: Build and Deploy
       run: |
-        dotnet test --no-build --verbosity normal
-    - name: Publish Blazor WebAssembly app
-      run: |
-        dotnet publish -c Release -o dist
-    - name: Deploy to GitHub Pages
-      run: |
-        git subtree push --prefix dist origin gh-pages
+        cd Imc/dist/wwwroot
+    
+        # Inicializa o repositório Git no diretório se não existir
+        if [ ! -d ".git" ]; then
+          git init
+          git checkout -b gh-pages
+        else
+          # Se o repositório já existir, continua no branch gh-pages
+          git checkout gh-pages
+        fi
+    
+        # Adiciona e faz o commit dos arquivos
+        git add .
+        git commit -m "Deploy to GitHub Pages"
+    
+        # Força a configuração do token de acesso para o push
+        git config user.email "actions@github.com"
+        git config user.name "GitHub Actions"
+        git push --force "https://${{ github.token }}@github.com/${{ github.repository }}.git" gh-pages
