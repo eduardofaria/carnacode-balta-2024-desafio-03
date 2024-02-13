@@ -21,7 +21,7 @@ jobs:
     - name: Build and Deploy
       run: |
         cd Imc/dist/wwwroot
-
+    
         # Inicializa o repositório Git no diretório se não existir
         if [ ! -d ".git" ]; then
           git init
@@ -30,10 +30,11 @@ jobs:
           # Se o repositório já existir, continua no branch gh-pages
           git checkout gh-pages
         fi
-
+    
         # Adiciona e faz o commit dos arquivos
         git add .
         git commit -m "Deploy to GitHub Pages"
-
-        # Força o push para o branch gh-pages usando o token de acesso embutido
-        git push --force "https://${{ github.token }}@github.com/${{ github.repository }}.git" gh-pages
+    
+        # Configura as credenciais para o push usando o token de acesso embutido
+        git remote add origin-with-token "https://${{ github.token }}@github.com/${{ github.repository }}.git"
+        git push --force origin-with-token gh-pages
