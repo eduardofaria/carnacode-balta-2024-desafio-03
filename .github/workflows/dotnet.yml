@@ -13,23 +13,12 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20.10.0'
-
-    - name: Install http-server
-      run: npm install -g http-server
-
-    - name: Build and Deploy to GitHub Pages
+    - name: Build and Deploy
       run: |
-        cd Imc
-        npm install
-        npm run build
-        cd dist/wwwroot
-        git init
-        git config user.name "${{ github.actor }}"
-        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        cd Imc/dist/wwwroot
+        git checkout gh-pages || git checkout --orphan gh-pages
+        git rm -rf .
+        cp -r dist/wwwroot/* .
         git add .
         git commit -m "Deploy to GitHub Pages"
-        git push --force "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" main:gh-pages
+        git push origin gh-pages
