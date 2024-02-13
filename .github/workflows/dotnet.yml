@@ -16,9 +16,11 @@ jobs:
     - name: Build and Deploy
       run: |
         cd Imc/dist/wwwroot
+        git init
         git checkout gh-pages || git checkout --orphan gh-pages
         git rm -rf .
-        cp -r dist/wwwroot/* .
+        cp -r . ../../  # Mova os arquivos de volta para o diretório raiz do branch gh-pages
         git add .
         git commit -m "Deploy to GitHub Pages"
-        git push origin gh-pages
+        git push --force origin gh-pages
+
