@@ -1,0 +1,290 @@
+﻿@page "/result"
+@using System.Globalization
+@using System.Text.Json;
+@layout MainLayout
+<PageTitle>IMC -</PageTitle>
+
+<h1 class="page_title">@ImcIcon @ImcStatus</h1>
+<p class="page_desc">@ImcMessage</p>
+
+<div class="btn_area">
+    <ButtonComponent Label="@ButtonLabel" Primary="true" @onclick="SaveToHistory" />
+    <ButtonComponent Label="Ver meu histórico" Primary="false" @onclick="HandleLoadHistory" />
+</div>
+
+@code {
+    [Inject] protected ILocalStorageService LocalStorage { get; set; }
+    [Inject] protected IJSRuntime JSRuntime { get; set; }
+    private string ImcIcon { get; set; } = "";
+    private string ImcStatus { get; set; } = "";
+    private string ImcMessage { get; set; } = "";
+
+    string imc;
+    string sexo;
+    string over65;
+    string saveDate;
+
+    private string[] GetImcData()
+    {
+        string[] imcData = LocalStorage.GetItem<string[]>("IMCResult");
+
+        if (imcData != null)
+        {   
+            return imcData;
+        }
+        else
+        {
+            JSRuntime.InvokeVoidAsync("console.error", "O item 'IMCResult' não existe no LocalStorage");
+            return null;
+        }
+
+    }
+
+    private string[] GenerateImcResult()
+    {
+        string[] imcData = GetImcData();
+        string[] imcResult = [];
+        imc = imcData[0];
+        sexo = imcData[1];
+        over65 = imcData[2];
+
+
+        if (imcData != null)
+        {
+
+            double imcValue = double.Parse(imc, CultureInfo.InvariantCulture);
+            string[] statusIcons = ["\u26d4", "\u2705"];
+            string imcIcon = "";
+            string imcStatus = "";
+            string imcMessage = "";
+
+            if(sexo == "masculino" && over65 == "false")
+            {
+                switch (imcValue)
+                {
+                    case var _ when imcValue < 20.7:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Abaixo do peso";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 20.7 && imcValue <= 26.4:
+                        imcIcon = statusIcons[1];
+                        imcStatus = "Peso ideal";
+                        imcMessage = "Você está no peso ideal, continue mantendo este estilo!";
+                        break;
+                    case var _ when imcValue >= 26.5 && imcValue <= 27.8:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Pouco acima do peso";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 27.9 && imcValue <= 31.1:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Acima do peso";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 31.2:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Obesidade";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    default:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Valor de IMC inválido";
+                        imcMessage = "Por favor, verifique o valor do seu IMC";
+                        break;
+                }
+            }
+            else if (sexo == "feminino" && over65 == "false")
+            {
+                switch (imcValue)
+                {
+                    case var _ when imcValue < 19.1:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Abaixo do peso";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 19.1 && imcValue <= 25.8:
+                        imcIcon = statusIcons[1];
+                        imcStatus = "Peso ideal";
+                        imcMessage = "Você está no peso ideal, continue mantendo este estilo!";
+                        break;
+                    case var _ when imcValue >= 25.9 && imcValue <= 27.3:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Pouco acima do peso";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 27.4 && imcValue <= 32.3:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Acima do peso";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 32.4:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Obesidade";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    default:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Valor de IMC inválido";
+                        imcMessage = "Por favor, verifique o valor do seu IMC";
+                        break;
+                }
+            }
+            else if(sexo == "default" && over65 == "false"){
+
+                switch (imcValue)
+                {
+                    case var _ when imcValue < 16.0:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Baixo peso Grau III";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 16.0 && imcValue <= 16.9:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Baixo peso Grau II";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 17.0 && imcValue <= 18.4:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Baixo peso Grau I";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 18.5 && imcValue <= 24.9:
+                        imcIcon = statusIcons[1];
+                        imcStatus = "Peso ideal";
+                        imcMessage = "Você está no peso ideal, continue mantendo este estilo!";
+                        break;
+                    case var _ when imcValue >= 25.0 && imcValue <= 29.9:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Sobrepeso";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 30.0 && imcValue <= 34.9:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Obesidade Grau I";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 35.0 && imcValue <= 39.9:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Obesidade Grau II";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 40.0:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Obesidade Grau III";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    default:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Valor de IMC inválido";
+                        imcMessage = "Por favor, verifique o valor do seu IMC";
+                        break;
+                }
+
+            } else
+            {
+                switch (imcValue)
+                {
+                    case var _ when imcValue < 22.0:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Baixo peso";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    case var _ when imcValue >= 22.0 && imcValue <= 26.9:
+                        imcIcon = statusIcons[1];
+                        imcStatus = "Peso adequado";
+                        imcMessage = "Você está no peso adequado, continue mantendo este estilo!";
+                        break;
+                    case var _ when imcValue >= 27.0:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Obesidade";
+                        imcMessage = "Cuidado você está com " + imcStatus + ", dê uma atenção para sua saúde";
+                        break;
+                    default:
+                        imcIcon = statusIcons[0];
+                        imcStatus = "Valor de IMC inválido";
+                        imcMessage = "Por favor, verifique o valor do seu IMC";
+                        break;
+                }
+            }
+
+            imcResult = new string[] { imcIcon, imcStatus, imcMessage };
+
+            ImcIcon = imcIcon;
+            ImcStatus = imcStatus;
+            ImcMessage = imcMessage;
+        }
+
+
+        return imcResult;
+    }
+
+
+
+    private string ButtonLabel { get; set; } = "Registrar medidas";
+
+    private async Task SaveToHistory()
+    {
+        GetImcData();
+
+        // Alterar o rótulo do botão para "Registro salvo!"
+        ButtonLabel = "Registro salvo!";
+
+        // Aguardar 1 segundo
+        await Task.Delay(1000);
+
+        // Restaurar o rótulo do botão para "Registrar medidas"
+        ButtonLabel = "Registrar medidas";
+
+        var SaveDate = DateTime.Now.ToString();
+        string[] result = GenerateImcResult();
+
+        string[] imcData = new string[] { imc, result[0], result[1], result[2], SaveDate };
+
+        // Recupera os dados do Local Storage
+        string storedHistory = LocalStorage.GetItem<string>("IMCHistory");
+
+        List<string[]> existingHistory;
+
+        if (!string.IsNullOrEmpty(storedHistory))
+        {
+            // Desserializa Local Storage para List<string[]>
+            existingHistory = JsonSerializer.Deserialize<List<string[]>>(storedHistory);
+        }
+        else
+        {
+            // Cria uma lista vazia se o Local Storage estiver vazio
+            existingHistory = new List<string[]>();
+        }
+
+        // Adiciona item à lista
+        existingHistory.Add(imcData);
+
+        // Salva a lista atualizada no localstorage
+        LocalStorage.SetItem("IMCHistory", JsonSerializer.Serialize(existingHistory));
+    }
+
+
+    [Inject] NavigationManager Navigation { get; set; }
+    private void HandleLoadHistory()
+    {
+        string storedHistory = LocalStorage.GetItem<string>("IMCHistory");
+
+        if (storedHistory != null)
+        {
+            Navigation.NavigateTo("History");
+        }
+        else
+        {
+            JSRuntime.InvokeVoidAsync("console.error", "O item 'IMCHistory' não existe no LocalStorage");
+        }
+        
+    }
+
+
+    protected override void OnInitialized()
+    {
+        GenerateImcResult();
+    }
+
+}

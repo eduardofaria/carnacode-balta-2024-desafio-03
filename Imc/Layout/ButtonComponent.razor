@@ -1,0 +1,59 @@
+﻿<button class="@_className" @onclick="HandleClick">@DisplayLabel</button>
+
+@code {
+    [Parameter]
+    public string Label { get; set; }
+
+    private string _displayLabel;
+
+    string _className = "";
+
+    [Parameter]
+    public bool Primary
+    {
+        get
+        {
+            return _primary;
+        }
+
+        set
+        {
+            _primary = value;
+
+            if (_primary)
+            {
+                _className = "primary";
+            }
+            else
+            {
+                _className = "";
+            }
+        }
+    }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    private bool _primary;
+
+    private async Task HandleClick(MouseEventArgs args)
+    {
+        // EventCallback
+        if (OnClick.HasDelegate)
+        {
+            await OnClick.InvokeAsync(args);
+        }
+    }
+
+    private string DisplayLabel
+    {
+        get
+        {
+            return _displayLabel ?? Label;
+        }
+        set
+        {
+            _displayLabel = value;
+        }
+    }
+}
