@@ -1,0 +1,35 @@
+name: Blazor WebAssembly
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.100-preview.7  # Atualize a versão para a mais recente do .NET 6
+    - name: Restore dependencies and build
+      run: |
+        cd carnacode-balta-2024-desafio-03/Imc
+        dotnet restore
+        dotnet build --no-restore
+    - name: Test
+      run: |
+        cd carnacode-balta-2024-desafio-03/Imc
+        dotnet test --no-build --verbosity normal
+    - name: Publish Blazor WebAssembly app
+      run: |
+        cd carnacode-balta-2024-desafio-03/Imc
+        dotnet publish -c Release -o dist
+    - name: Deploy to GitHub Pages
+      run: |
+        cd carnacode-balta-2024-desafio-03/Imc
+        git subtree push --prefix dist origin gh-pages
