@@ -21,9 +21,19 @@ jobs:
     - name: Build and Deploy
       run: |
         cd Imc/dist/wwwroot
-        git init
-        git checkout main
-        git checkout -b gh-pages
+
+        # Inicializa o repositório Git no diretório se não existir
+        if [ ! -d ".git" ]; then
+          git init
+          git checkout -b gh-pages
+        else
+          # Se o repositório já existir, continua no branch gh-pages
+          git checkout gh-pages
+        fi
+
+        # Adiciona e faz o commit dos arquivos
         git add .
         git commit -m "Deploy to GitHub Pages"
+
+        # Força o push para o branch gh-pages
         git push --force origin gh-pages
