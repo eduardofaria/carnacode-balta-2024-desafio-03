@@ -35,5 +35,8 @@ jobs:
         git add .
         git commit -m "Deploy to GitHub Pages"
 
+        # Configura as credenciais para o push
+        git remote add origin "https://${{ github.token }}@github.com/${{ github.repository }}.git"
+
         # Força o push para o branch gh-pages
         git push --force origin gh-pages
