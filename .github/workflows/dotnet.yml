@@ -19,8 +19,9 @@ jobs:
         git init
         git checkout gh-pages || git checkout --orphan gh-pages
         git rm -rf .
-        cp -r . ../../  # Mova os arquivos de volta para o diretório raiz do branch gh-pages
+        cp -r ./* ../../
         git add .
         git commit -m "Deploy to GitHub Pages"
         git push --force origin gh-pages
+
 
