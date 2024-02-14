@@ -227,16 +227,16 @@ main {
     font-size: 16px;
 }
 
-    .data_in select option {
-        color: var(--obs);
-    }
+.data_in select option {
+    color: var(--obs);
+}
 
-        .data_in select option:checked {
-            color: var(--text);
-        }
+.data_in select option:checked {
+    color: var(--text);
+}
 
 .data_in select {
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 .data_in .in_check {
