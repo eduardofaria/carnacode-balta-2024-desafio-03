@@ -68,7 +68,7 @@
 
     [Inject] protected ILocalStorageService LocalStorage { get; set; }
     private string Altura { get; set; }
-    private double Peso { get; set; }
+    private string Peso { get; set; }
     private string Sexo { get; set; }
     private bool Over65 { get; set; } = false;
     private double Imc { get; set; }
@@ -86,10 +86,14 @@
         double Imc;
         // IMC = peso / (altura x altura) (kg/m2)
 
-        //Filtro de Altura
+        // Filtro de Altura
         string alturaInput = Altura.Replace(',', '.'); // Substitui vírgula por ponto, se necessário
         alturaInput = alturaInput.Replace("m", ""); // Remove "m", se presente
         alturaInput = alturaInput.Trim(); // Remove espaços em branco
+
+        // Filtro de Peso
+        string pesoInput = Peso.Replace(',', '.'); // Substitui vírgula por ponto, se necessário
+        pesoInput = pesoInput.Trim(); // Remove espaços em branco
 
         // Modificar valores como 190 para 1.90, se necessário
         if (alturaInput.Length == 3) // Verifica se o comprimento é 3 (ex: 190)
@@ -97,9 +101,10 @@
             alturaInput = alturaInput.Insert(1, "."); // Insere um ponto após o primeiro dígito
         }
 
-        if (double.TryParse(alturaInput, NumberStyles.Any, CultureInfo.InvariantCulture, out double altura))
+        if (double.TryParse(alturaInput, NumberStyles.Any, CultureInfo.InvariantCulture, out double altura)
+            && double.TryParse(pesoInput, NumberStyles.Any, CultureInfo.InvariantCulture, out double peso))
         {
-            Imc = Peso / (altura * altura);
+            Imc = peso / (altura * altura);
 
             if (string.IsNullOrEmpty(Sexo))
             {
@@ -111,7 +116,6 @@
         }
         else
         {
-          
             throw new Exception("Erro ao calcular o IMC. Verifique os valores de altura e peso.");
         }
     }
