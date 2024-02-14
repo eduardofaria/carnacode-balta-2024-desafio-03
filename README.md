@@ -33,7 +33,7 @@ Neste terceiro desafio, adicionamos suporte a PWA e publicamos a aplicação com
 - Caso não tenha esse módulo instaldo, instale com o comando: 
   npm install -g http-server
 
-![print-1](https://github.com/eduardofaria/carnacode-balta-2024-desafio-03/assets/20214737/dca09790-cd06-40a8-a22a-255f7824bc97)
+![print-1](https://github.com/eduardofaria/carnacode-balta-2024-desafio-03/assets/20214737/99beb954-9c69-4d4f-86fb-a8f992d3ef70)
 ![print-2](https://github.com/eduardofaria/carnacode-balta-2024-desafio-03/assets/20214737/e03f36a7-ef42-445f-96b7-1d222ae43108)
 ![print-3](https://github.com/eduardofaria/carnacode-balta-2024-desafio-03/assets/20214737/14423796-e8c5-4ed5-a211-dbd5ce0d66de)
 
